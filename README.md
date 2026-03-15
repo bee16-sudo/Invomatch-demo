@@ -171,7 +171,7 @@ The full version includes everything in this demo plus:
 
 > **[Get full version.](https://nowpayments.io/payment/?iid=5337662070)(#)** *(crypto payments accepted)*
 ### If you wish to contact:
-> **[Use this Email](mailto:bee613743@gmail.com)(#)**
+> **[Use this Email](gmailto:bee613743@gmail.com)(#)**
 ---
 
 ## License
@@ -182,9 +182,7 @@ The full version is sold under a Commercial License. See [full version](#get-the
 
 ---
 
-## Questions?
 
-Open an issue or email support@invomatch.io
 
 ---
 
