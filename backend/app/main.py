@@ -26,7 +26,7 @@ def create_app() -> FastAPI:
             "Payments, background workers, Redis caching, "
             "Prometheus monitoring, CI/CD pipelines, and AWS Terraform "
             "are available in the **full version**.\n\n"
-            "👉 [Get the full version](https://github.com/your-username/invomatch)"
+            "👉 [Get the full version](https://github.com/bee16-sudo/invomatch.git)"
         ),
         docs_url="/api/docs",
         redoc_url="/api/redoc",
