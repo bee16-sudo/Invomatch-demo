@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvoMatch — Invoice Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f0e0d;
+      --ink-2: #3d3a36;
+      --ink-3: #7a756e;
+      --paper: #faf8f5;
+      --paper-2: #f2efe9;
+      --paper-3: #e8e3da;
+      --gold: #c9a84c;
+      --gold-light: #f0dfa0;
+      --gold-pale: #fdf6e3;
+      --teal: #1a6b5a;
+      --teal-light: #d1ede8;
+      --red: #c0392b;
+      --red-light: #fde8e6;
+      --blue: #1a4a8a;
+      --blue-light: #dce9f8;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(15,14,13,0.08), 0 4px 16px rgba(15,14,13,0.06);
+      --shadow-lg: 0 8px 32px rgba(15,14,13,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Auth screens ───────────────────────────────────────────────── */
+    .auth-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ink);
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(26,107,90,0.12) 0%, transparent 50%);
+    }
+
+    .auth-card {
+      background: var(--paper);
+      border-radius: 16px;
+      padding: 48px 44px;
+      width: 420px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .auth-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--ink);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-logo span { color: var(--gold); }
+
+    .auth-subtitle {
+      color: var(--ink-3);
+      font-size: 13px;
+      margin-bottom: 36px;
+      font-weight: 300;
+    }
+
+    .auth-toggle {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--ink-3);
+    }
+
+    .auth-toggle a {
+      color: var(--gold);
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    /* ── Form elements ──────────────────────────────────────────────── */
+    .form-group { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--paper-3);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      background: white;
+      color: var(--ink);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-pale);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: white;
+      width: 100%;
+      justify-content: center;
+      padding: 12px 20px;
+    }
+
+    .btn-primary:hover { background: var(--ink-2); }
+
+    .btn-gold {
+      background: var(--gold);
+      color: white;
+    }
+
+    .btn-gold:hover { background: #b8963e; }
+
+    .btn-outline {
+      background: white;
+      color: var(--ink);
+      border: 1.5px solid var(--paper-3);
+    }
+
+    .btn-outline:hover { border-color: var(--ink-3); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink-2);
+      padding: 8px 12px;
+    }
+
+    .btn-ghost:hover { background: var(--paper-2); }
+
+    .btn-danger {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: var(--ink);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .sidebar-logo {
+      padding: 28px 24px 24px;
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      letter-spacing: -0.3px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo span { color: var(--gold); }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.6);
+      font-size: 13.5px;
+      font-weight: 400;
+      transition: all 0.15s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+    .nav-item.active { background: rgba(201,168,76,0.2); color: var(--gold-light); }
+
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 500;
+    }
+
+    .user-email {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ── Main content ───────────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .topbar {
+      background: white;
+      border-bottom: 1px solid var(--paper-3);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .page-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      letter-spacing: -0.3px;
+    }
+
+    .content { padding: 28px 32px; }
+
+    /* ── Stat cards ─────────────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid var(--paper-3);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ink-3);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    /* ── Table ──────────────────────────────────────────────────────── */
+    .card {
+      background: white;
+      border: 1px solid var(--paper-3);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--paper-2);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    th {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink-3);
+      padding: 12px 22px;
+      text-align: left;
+      border-bottom: 1px solid var(--paper-2);
+      background: var(--paper);
+    }
+
+    td {
+      padding: 13px 22px;
+      border-bottom: 1px solid var(--paper-2);
+      font-size: 13.5px;
+      color: var(--ink-2);
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--paper); }
+
+    /* ── Status badges ──────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+
+    .badge-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .badge-pending   { background: var(--gold-pale);  color: #8a6d1a; }
+    .badge-pending .badge-dot { background: var(--gold); }
+    .badge-verified  { background: var(--teal-light); color: var(--teal); }
+    .badge-verified .badge-dot { background: var(--teal); }
+    .badge-paid      { background: #e8f5e9; color: #2e7d32; }
+    .badge-paid .badge-dot { background: #4caf50; }
+    .badge-disputed  { background: var(--red-light);  color: var(--red); }
+    .badge-disputed .badge-dot { background: var(--red); }
+
+    /* ── Modal ──────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,14,13,0.5);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--paper-2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+    }
+
+    .modal-body { padding: 24px 28px; }
+
+    .modal-footer {
+      padding: 16px 28px 24px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    /* ── Misc ───────────────────────────────────────────────────────── */
+    .error-msg {
+      background: var(--red-light);
+      color: var(--red);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--ink-3);
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      color: var(--ink-2);
+      margin-bottom: 6px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--ink-3);
+    }
+
+    .amount { font-family: 'DM Serif Display', serif; font-size: 15px; }
+
+    .hidden { display: none !important; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in { animation: fadeIn 0.2s ease; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="authScreen" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">Invo<span>Match</span></div>
+    <div class="auth-subtitle">Invoice verification & payment tracking</div>
+
+    <div id="authError" class="error-msg hidden"></div>
+
+    <!-- Login form -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
+      <div class="auth-toggle">
+        No account? <a onclick="showRegister()">Create one free</a>
+      </div>
+    </div>
+
+    <!-- Register form -->
+    <div id="registerForm" class="hidden">
+      <div class="form-group">
+        <label>Full name</label>
+        <input type="text" id="regName" placeholder="Jane Smith" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Min 8 characters" />
+      </div>
+      <button class="btn btn-primary" onclick="handleRegister()">Create account</button>
+      <div class="auth-toggle">
+        Already have an account? <a onclick="showLogin()">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="appScreen" class="app hidden">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Invo<span>Match</span></div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <span>⬡</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('invoices')" id="nav-invoices">
+        <span>◧</span> Invoices
+      </button>
+      <button class="nav-item" onclick="showPage('clients')" id="nav-clients">
+        <span>◈</span> Clients
+      </button>
+      <button class="nav-item" onclick="showPage('payments')" id="nav-payments">
+        <span>◎</span> Payments
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar" id="sidebarAvatar">?</div>
+        <div>
+          <div class="user-name" id="sidebarName">—</div>
+          <div class="user-email" id="sidebarEmail">—</div>
+        </div>
+      </div>
+      <button class="nav-item" onclick="handleLogout()" style="margin-top:8px">
+        <span>↩</span> Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Dashboard -->
+    <div id="page-dashboard" class="fade-in">
+      <div class="topbar">
+        <div class="page-title">Dashboard</div>
+        <button class="btn btn-gold btn-sm" onclick="openNewInvoiceModal()">+ New Invoice</button>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Invoices</div>
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-sub">all time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pending</div>
+            <div class="stat-value" id="stat-pending" style="color:var(--gold)">—</div>
+            <div class="stat-sub">awaiting verification</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Paid</div>
+            <div class="stat-value" id="stat-paid" style="color:#2e7d32">—</div>
+            <div class="stat-sub">fully settled</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Collected</div>
+            <div class="stat-value" id="stat-collected" style="font-size:22px">—</div>
+            <div class="stat-sub">USD</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Invoices</div>
+            <button class="btn btn-outline btn-sm" onclick="showPage('invoices')">View all</button>
+          </div>
+          <div id="dashInvoiceList"><div class="loading">Loading…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invoices -->
+    <div id="page-invoices" class="hidden fade-in">
+      <div class="topbar">
+        <div class="page-title">Invoices</div>
+        <button class="btn btn-gold btn-sm" onclick="openNewInvoiceModal()">+ New Invoice</button>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div id="invoiceList"><div class="loading">Loading…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clients -->
+    <div id="page-clients" class="hidden fade-in">
+      <div class="topbar">
+        <div class="page-title">Clients</div>
+        <button class="btn btn-gold btn-sm" onclick="openNewClientModal()">+ New Client</button>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div id="clientList"><div class="loading">Loading…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments -->
+    <div id="page-payments" class="hidden fade-in">
+      <div class="topbar">
+        <div class="page-title">Payments</div>
+        <button class="btn btn-gold btn-sm" onclick="openRecordPaymentModal()">+ Record Payment</button>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div id="paymentList"><div class="loading">Loading…</div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- New Invoice Modal -->
+<div id="newInvoiceModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Invoice</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('newInvoiceModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="invoiceModalError" class="error-msg hidden"></div>
+      <div class="form-group">
+        <label>Client</label>
+        <select id="invoiceClient" name="client">
+          <option value="">Select a client…</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Invoice Number</label>
+          <input type="text" id="invoiceNumber" name="invoiceNumber" placeholder="INV-001" />
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="invoiceCurrency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="UGX">UGX</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" id="invoiceAmount" name="amount" placeholder="0.00" step="0.01" min="0.01" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Issue Date</label>
+          <input type="date" id="invoiceIssue" name="issueDate" />
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="invoiceDue" name="dueDate" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea id="invoiceNotes" rows="2" placeholder="Additional notes…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newInvoiceModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="handleCreateInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Client Modal -->
+<div id="newClientModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Client</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('newClientModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="clientModalError" class="error-msg hidden"></div>
+      <div class="form-group">
+        <label>Company / Client Name</label>
+        <input type="text" id="clientName" placeholder="Acme Inc." />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="clientEmail" placeholder="billing@acme.com" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tax ID (optional)</label>
+          <input type="text" id="clientTaxId" placeholder="123-456-789" />
+        </div>
+        <div class="form-group">
+          <label>Phone (optional)</label>
+          <input type="text" id="clientPhone" placeholder="+1 555 000 0000" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Address (optional)</label>
+        <textarea id="clientAddress" rows="2" placeholder="123 Main St, City, Country"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newClientModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="handleCreateClient()">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Record Payment Modal -->
+<div id="recordPaymentModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Record Payment</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('recordPaymentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="paymentModalError" class="error-msg hidden"></div>
+      <div class="form-group">
+        <label>Invoice</label>
+        <select id="paymentInvoice">
+          <option value="">Select invoice…</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount</label>
+          <input type="number" id="paymentAmount" placeholder="0.00" step="0.01" min="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="paymentCurrency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="UGX">UGX</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Payment Date</label>
+        <input type="date" id="paymentDate" />
+      </div>
+      <div class="form-group">
+        <label>Reference (optional)</label>
+        <input type="text" id="paymentRef" placeholder="Bank ref, check number, etc." />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('recordPaymentModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="handleRecordPayment()">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════════════════════ -->
+<script>
+  const API = 'http://localhost:8000/api/v1';
+
+  // ── State ───────────────────────────────────────────────────────────────
+  let state = {
+    token: localStorage.getItem('access_token') || null,
+    user: null,
+    clients: [],
+    invoices: [],
+    payments: [],
+    currentPage: 'dashboard',
+  };
+
+  // ── Helpers ─────────────────────────────────────────────────────────────
+  async function apiFetch(path, opts = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+    const res = await fetch(API + path, { ...opts, headers });
+    if (res.status === 401) { handleLogout(); return; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.detail || 'Request failed');
+    return data;
+  }
+
+  function fmt(amount, currency = 'USD') {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+  }
+
+  function badge(status) {
+    return `<span class="badge badge-${status}"><span class="badge-dot"></span>${status}</span>`;
+  }
+
+  function today() {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  // ── Auth ─────────────────────────────────────────────────────────────────
+  function showRegister() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('authError').classList.add('hidden');
+  }
+
+  function showLogin() {
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('authError').classList.add('hidden');
+  }
+
+  function showAuthError(msg) {
+    const el = document.getElementById('authError');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    try {
+      const data = await apiFetch('/users/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      state.token = data.access_token;
+      state.user = data.user;
+      localStorage.setItem('access_token', state.token);
+      bootApp();
+    } catch (e) {
+      showAuthError(e.message);
+    }
+  }
+
+  async function handleRegister() {
+    const full_name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    try {
+      const data = await apiFetch('/users/register', {
+        method: 'POST',
+        body: JSON.stringify({ full_name, email, password }),
+      });
+      state.token = data.access_token;
+      state.user = data.user;
+      localStorage.setItem('access_token', state.token);
+      bootApp();
+    } catch (e) {
+      showAuthError(e.message);
+    }
+  }
+
+  function handleLogout() {
+    state.token = null;
+    state.user = null;
+    localStorage.removeItem('access_token');
+    document.getElementById('appScreen').classList.add('hidden');
+    document.getElementById('authScreen').classList.remove('hidden');
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────────────
+  async function bootApp() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.remove('hidden');
+
+    if (!state.user) {
+      try { state.user = await apiFetch('/users/me'); } catch {}
+    }
+
+    if (state.user) {
+      const initials = state.user.full_name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      document.getElementById('sidebarAvatar').textContent = initials;
+      document.getElementById('sidebarName').textContent = state.user.full_name;
+      document.getElementById('sidebarEmail').textContent = state.user.email;
+    }
+
+    await Promise.all([loadClients(), loadInvoices(), loadPayments()]);
+    showPage('dashboard');
+    loadDashboard();
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────────────
+  function showPage(page) {
+    ['dashboard', 'invoices', 'clients', 'payments'].forEach(p => {
+      document.getElementById(`page-${p}`).classList.toggle('hidden', p !== page);
+      document.getElementById(`nav-${p}`).classList.toggle('active', p === page);
+    });
+    state.currentPage = page;
+    if (page === 'invoices') renderInvoiceTable();
+    if (page === 'clients') renderClientTable();
+    if (page === 'payments') renderPaymentTable();
+  }
+
+  // ── Data loaders ────────────────────────────────────────────────────────
+  async function loadClients() {
+    try { state.clients = await apiFetch('/clients?limit=100'); } catch {}
+  }
+
+  async function loadInvoices() {
+    try { state.invoices = await apiFetch('/invoices?limit=50'); } catch {}
+  }
+
+  async function loadPayments() {
+    try { state.payments = await apiFetch('/payments?limit=50'); } catch {}
+  }
+
+  // ── Dashboard ───────────────────────────────────────────────────────────
+  async function loadDashboard() {
+    try {
+      const dash = await apiFetch('/dashboard');
+      document.getElementById('stat-total').textContent = dash.total_invoices;
+      document.getElementById('stat-pending').textContent = dash.invoice_status.pending;
+      document.getElementById('stat-paid').textContent = dash.invoice_status.paid;
+      document.getElementById('stat-collected').textContent = fmt(dash.total_collected || 0);
+    } catch {}
+
+    const recent = state.invoices.slice(0, 6);
+    const el = document.getElementById('dashInvoiceList');
+    if (!recent.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">◧</div><h3>No invoices yet</h3><p>Create your first invoice to get started</p></div>`;
+      return;
+    }
+    el.innerHTML = invoiceTableHTML(recent);
+  }
+
+  // ── Invoice rendering ───────────────────────────────────────────────────
+  function clientName(id) {
+    const c = state.clients.find(c => c.id === id);
+    return c ? c.name : '—';
+  }
+
+  function invoiceTableHTML(items) {
+    return `<table>
+      <thead><tr>
+        <th>Invoice #</th><th>Client</th><th>Amount</th>
+        <th>Issue Date</th><th>Due Date</th><th>Status</th>
+      </tr></thead>
+      <tbody>${items.map(inv => `
+        <tr>
+          <td><strong>${inv.invoice_number}</strong></td>
+          <td>${clientName(inv.client_id)}</td>
+          <td class="amount">${fmt(inv.amount, inv.currency)}</td>
+          <td>${inv.issue_date}</td>
+          <td>${inv.due_date}</td>
+          <td>${badge(inv.status)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  function renderInvoiceTable() {
+    const el = document.getElementById('invoiceList');
+    if (!state.invoices.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">◧</div><h3>No invoices yet</h3><p>Click "New Invoice" to create your first one</p></div>`;
+      return;
+    }
+    el.innerHTML = invoiceTableHTML(state.invoices);
+  }
+
+  // ── Client rendering ────────────────────────────────────────────────────
+  function renderClientTable() {
+    const el = document.getElementById('clientList');
+    if (!state.clients.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><h3>No clients yet</h3><p>Add your first client to get started</p></div>`;
+      return;
+    }
+    el.innerHTML = `<table>
+      <thead><tr><th>Name</th><th>Email</th><th>Tax ID</th><th>Phone</th><th>Added</th></tr></thead>
+      <tbody>${state.clients.map(c => `
+        <tr>
+          <td><strong>${c.name}</strong></td>
+          <td>${c.email || '—'}</td>
+          <td>${c.tax_id || '—'}</td>
+          <td>${c.phone || '—'}</td>
+          <td>${c.created_at ? c.created_at.split('T')[0] : '—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  // ── Payment rendering ───────────────────────────────────────────────────
+  function renderPaymentTable() {
+    const el = document.getElementById('paymentList');
+    if (!state.payments.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">◎</div><h3>No payments recorded</h3><p>Record a payment against an invoice</p></div>`;
+      return;
+    }
+    const invoiceNum = (id) => { const i = state.invoices.find(v => v.id === id); return i ? i.invoice_number : id.slice(0,8); };
+    el.innerHTML = `<table>
+      <thead><tr><th>Invoice</th><th>Amount</th><th>Date</th><th>Reference</th><th>Status</th></tr></thead>
+      <tbody>${state.payments.map(p => `
+        <tr>
+          <td>${invoiceNum(p.invoice_id)}</td>
+          <td class="amount">${fmt(p.amount, p.currency)}</td>
+          <td>${p.payment_date}</td>
+          <td>${p.reference || '—'}</td>
+          <td>${badge(p.status)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  // ── New Invoice Modal ───────────────────────────────────────────────────
+  function openNewInvoiceModal() {
+    // Populate client dropdown
+    const sel = document.getElementById('invoiceClient');
+    sel.innerHTML = '<option value="">Select a client…</option>';
+    state.clients.forEach(c => {
+      sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+    document.getElementById('invoiceIssue').value = today();
+    document.getElementById('invoiceModalError').classList.add('hidden');
+    document.getElementById('newInvoiceModal').classList.remove('hidden');
+  }
+
+  async function handleCreateInvoice() {
+    const body = {
+      client_id: document.getElementById('invoiceClient').value,
+      invoice_number: document.getElementById('invoiceNumber').value,
+      amount: parseFloat(document.getElementById('invoiceAmount').value),
+      currency: document.getElementById('invoiceCurrency').value,
+      issue_date: document.getElementById('invoiceIssue').value,
+      due_date: document.getElementById('invoiceDue').value,
+      notes: document.getElementById('invoiceNotes').value || null,
+    };
+    try {
+      const inv = await apiFetch('/invoices', { method: 'POST', body: JSON.stringify(body) });
+      state.invoices.unshift(inv);
+      closeModal('newInvoiceModal');
+      if (state.currentPage === 'invoices') renderInvoiceTable();
+      loadDashboard();
+    } catch (e) {
+      const el = document.getElementById('invoiceModalError');
+      el.textContent = e.message;
+      el.classList.remove('hidden');
+    }
+  }
+
+  // ── New Client Modal ────────────────────────────────────────────────────
+  function openNewClientModal() {
+    document.getElementById('clientModalError').classList.add('hidden');
+    document.getElementById('newClientModal').classList.remove('hidden');
+  }
+
+  async function handleCreateClient() {
+    const body = {
+      name: document.getElementById('clientName').value,
+      email: document.getElementById('clientEmail').value || null,
+      tax_id: document.getElementById('clientTaxId').value || null,
+      phone: document.getElementById('clientPhone').value || null,
+      address: document.getElementById('clientAddress').value || null,
+    };
+    try {
+      const client = await apiFetch('/clients', { method: 'POST', body: JSON.stringify(body) });
+      state.clients.push(client);
+      closeModal('newClientModal');
+      if (state.currentPage === 'clients') renderClientTable();
+    } catch (e) {
+      const el = document.getElementById('clientModalError');
+      el.textContent = e.message;
+      el.classList.remove('hidden');
+    }
+  }
+
+  // ── Record Payment Modal ────────────────────────────────────────────────
+  function openRecordPaymentModal() {
+    const sel = document.getElementById('paymentInvoice');
+    sel.innerHTML = '<option value="">Select invoice…</option>';
+    state.invoices.filter(i => i.status !== 'paid').forEach(i => {
+      sel.innerHTML += `<option value="${i.id}">${i.invoice_number} — ${clientName(i.client_id)} (${fmt(i.amount, i.currency)})</option>`;
+    });
+    document.getElementById('paymentDate').value = today();
+    document.getElementById('paymentModalError').classList.add('hidden');
+    document.getElementById('recordPaymentModal').classList.remove('hidden');
+  }
+
+  async function handleRecordPayment() {
+    const body = {
+      invoice_id: document.getElementById('paymentInvoice').value,
+      amount: parseFloat(document.getElementById('paymentAmount').value),
+      currency: document.getElementById('paymentCurrency').value,
+      payment_date: document.getElementById('paymentDate').value,
+      reference: document.getElementById('paymentRef').value || null,
+    };
+    try {
+      const payment = await apiFetch('/payments', { method: 'POST', body: JSON.stringify(body) });
+      state.payments.unshift(payment);
+      // Refresh invoices so status updates
+      await loadInvoices();
+      closeModal('recordPaymentModal');
+      if (state.currentPage === 'payments') renderPaymentTable();
+      if (state.currentPage === 'dashboard') loadDashboard();
+    } catch (e) {
+      const el = document.getElementById('paymentModalError');
+      el.textContent = e.message;
+      el.classList.remove('hidden');
+    }
+  }
+
+  // ── Modal helpers ───────────────────────────────────────────────────────
+  function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  // Close on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.add('hidden');
+    });
+  });
+
+  // ── Init ────────────────────────────────────────────────────────────────
+  if (state.token) {
+    bootApp();
+  }
+</script>
+</body>
+</html>

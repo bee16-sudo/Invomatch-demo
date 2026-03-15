@@ -1,0 +1,164 @@
+openapi: 3.0.0
+info:
+  title: InvoMatch API
+  version: 1.0.0
+  description: |
+    InvoMatch — Invoice verification and payment tracking SaaS.
+    All endpoints except `/users/register` and `/users/login` require a Bearer JWT token.
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development
+  - url: https://api.invomatch.io/api/v1
+    description: Production
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    InvoiceCreate:
+      type: object
+      required: [client_id, invoice_number, amount, issue_date, due_date]
+      properties:
+        client_id:     { type: string, format: uuid }
+        invoice_number:{ type: string, minLength: 1, maxLength: 50 }
+        amount:        { type: number, format: decimal, minimum: 0.01 }
+        currency:      { type: string, default: USD, maxLength: 3 }
+        issue_date:    { type: string, format: date }
+        due_date:      { type: string, format: date }
+        notes:         { type: string, nullable: true }
+
+    Invoice:
+      allOf:
+        - $ref: '#/components/schemas/InvoiceCreate'
+        - type: object
+          properties:
+            id:          { type: string, format: uuid }
+            user_id:     { type: string, format: uuid }
+            status:      { type: string, enum: [pending, verified, paid, disputed] }
+            verified_at: { type: string, format: date-time, nullable: true }
+            created_at:  { type: string, format: date-time }
+
+    PaymentCreate:
+      type: object
+      required: [invoice_id, amount, payment_date]
+      properties:
+        invoice_id:   { type: string, format: uuid }
+        amount:       { type: number, minimum: 0.01 }
+        currency:     { type: string, default: USD }
+        payment_date: { type: string, format: date }
+        reference:    { type: string, nullable: true }
+
+    Error:
+      type: object
+      properties:
+        detail: { type: string }
+
+security:
+  - bearerAuth: []
+
+paths:
+  /users/register:
+    post:
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, full_name]
+              properties:
+                email:     { type: string, format: email }
+                password:  { type: string, minLength: 8 }
+                full_name: { type: string }
+      responses:
+        201: { description: Registered successfully }
+        409: { description: Email already in use }
+
+  /users/login:
+    post:
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:    { type: string }
+                password: { type: string }
+      responses:
+        200: { description: JWT token returned }
+        401: { description: Invalid credentials }
+
+  /invoices:
+    post:
+      summary: Create a new invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreate'
+      responses:
+        201:
+          description: Invoice created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+    get:
+      summary: List invoices for the authenticated user
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        200:
+          description: List of invoices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+
+  /payments:
+    post:
+      summary: Record a payment against an invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+      responses:
+        201: { description: Payment recorded }
+        422: { description: Business rule violated }
+
+  /dashboard:
+    get:
+      summary: Get aggregated dashboard stats (cached 5 min)
+      responses:
+        200:
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_invoices:  { type: integer }
+                  invoice_status:  { type: object }
+                  total_clients:   { type: integer }
+                  total_collected: { type: string }
