@@ -169,9 +169,9 @@ The full version includes everything in this demo plus:
 
 ### 💰 $39 — one-time payment, yours forever
 
-> **[https://nowpayments.io/payment/?iid=5337662070](#)** *(crypto payments accepted)*
+> **[Get full version.](https://nowpayments.io/payment/?iid=5337662070)(#)** *(crypto payments accepted)*
 ### If you wish to contact:
-> **[bee613743@gmail.com](#)** *(Email me here)*
+> **[Use this Email](bee613743@gmail.com)(#)**
 ---
 
 ## License
