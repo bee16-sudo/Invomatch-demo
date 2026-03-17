@@ -172,7 +172,7 @@ The full version includes everything in this demo plus:
 > ### Get full version.
 >  **[using this payment link.](https://nowpayments.io/payment/?iid=5337662070)(#)** *(crypto payments accepted)*
 ### And contact:
-> **[Use this Email](https://mail.google.com/mail/?view=cm&to=bee613743@gmail.com)(#)**
+> **[Using this Email](https://mail.google.com/mail/?view=cm&to=bee613743@gmail.com)(#)**
 ---
 
 ## License
