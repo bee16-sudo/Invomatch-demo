@@ -30,9 +30,9 @@ This is the **free demo version**. It lets you explore the code, run it locally,
 
 Try it right now — no setup needed:
 
-> 🌐 **API:** [https://invomatch.onrender.com](https://invomatch.onrender.com/health)
+> 🌐 **API:** [invomatch-demo-production.up.railway.app/health)
 >
-> 📖 **Interactive Docs:** [https://invomatch.onrender.com/api/docs](https://invomatch.onrender.com/api/docs)
+> 📖 **Interactive Docs:** [invomatch-demo-production.up.railway.app/api/docs)
 
 Register an account, create a client, raise an invoice — the full flow works live.
 
