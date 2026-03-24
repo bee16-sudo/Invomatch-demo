@@ -7,7 +7,7 @@ info:
     All endpoints except `/users/register` and `/users/login` require a Bearer JWT token.
 
 servers:
-  - url: http://localhost:8000/api/v1
+  - url: invomatch-demo-production.up.railway.app
     description: Local development
   - url: https://api.invomatch.io/api/v1
     description: Production
